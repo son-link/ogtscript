@@ -19,6 +19,7 @@ class OGTTag extends HTMLElement {
 	  return `
       <p>
         <input type="file" id="openfile" accept=".ogt" />
+        <button id="clear">Limpiar</button>
       </p>
       <p id="nombre-ogt"></p>
       <canvas id="drawer" width="256" height="256"></canvas>
@@ -47,6 +48,9 @@ class OGTTag extends HTMLElement {
     // El selector de fichero
 	  this.inputFile = this.shadowRoot.querySelector("#openfile");
 	  this.inputFile.addEventListener("change", this.openOgt.bind(this));
+
+    this.clearBtn = this.shadowRoot.querySelector("#clear");
+	  this.clearBtn.addEventListener("click", () => this.ogt.clear());
 	}
 
   // Esta función se dispara al desconectar el Web Element

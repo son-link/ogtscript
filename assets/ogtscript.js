@@ -10,6 +10,7 @@
 class OGTScript {
   constructor(canvas=null) {
     this.canvas = null;
+    this.ctx = null;
 
     if (canvas) {
       if (typeof canvas == 'string') this.canvas = document.querySelector(canvas);
@@ -24,19 +25,18 @@ class OGTScript {
    * @param {int} rows El total de lineas
    */
   drawImage = function(lines, cols, rows) {
-    const ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext('2d');
     let scale = 8
-    ctx.scale(scale, scale)
+    this.ctx.scale(scale, scale)
     let posx, posy = 0;
 
     for (let row = 0; row < rows; row++) {
-      const pixels = lines[row].split(';')
+      const colors = lines[row].split(';')
 
       for (let col = 0; col < cols; col++) {
-        const pixel = pixels[col];
-        const [red, green, blue] = hex2rgb(pixel)
-        ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-          ctx.fillRect(posx, posy, 1, 1);
+        const color = colors[col];
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(posx, posy, 1, 1);
         posx++
       }
 
@@ -62,6 +62,10 @@ class OGTScript {
     };
 
     reader.readAsText(file);
+  }
+
+  clear = function() {
+    if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }
 
