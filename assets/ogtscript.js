@@ -8,13 +8,21 @@
  * @example new OGTScript('#mi-canvas')
  */
 class OGTScript {
-  constructor(canvas=null) {
+  constructor(canvas=null, options=null) {
     this.canvas = null;
     this.ctx = null;
+    this.filename = '';
 
     if (canvas) {
       if (typeof canvas == 'string') this.canvas = document.querySelector(canvas);
       else if (typeof canvas == 'object') this.canvas = canvas;
+    } else this.canvas = document.createElement('canvas');
+
+    if (options && typeof options == 'object') this.options = options;
+    else {
+      this.options = {
+        scale: 1
+      }
     }
   }
 
@@ -26,8 +34,7 @@ class OGTScript {
    */
   drawImage = function(lines, cols, rows) {
     this.ctx = this.canvas.getContext('2d');
-    let scale = 8
-    this.ctx.scale(scale, scale)
+    this.ctx.scale(this.scale, this.scale);
     let posx, posy = 0;
 
     for (let row = 0; row < rows; row++) {
@@ -47,10 +54,11 @@ class OGTScript {
 
   /**
    * Abre el fichero seleccionado en el selector de fichero e invoca a la función de dibujo
-   * @param {object} file 
+   * @param {object} file
    */
   openOgt = function(file) {
     const reader = new FileReader();
+    this.filename = file.name.replace('.ogt', '');
 
     reader.onload = () => {
       const data = reader.result.split('\n');
@@ -64,14 +72,35 @@ class OGTScript {
     reader.readAsText(file);
   }
 
+  openOgtUrl = function(url) {
+    this.clear();
+    if (!url || typeof url != 'string') return;
+
+    fetch(url).then( resp => {
+      if (resp.status != 200) return;
+      resp.text().then( data => {
+        data = data.split('\n');
+        const [format, version, cols, rows, ..._] = data[0].split(';');
+        const lines = data.slice(1)
+        if (format.toLowerCase() != 'ogt') return;
+
+        this.drawImage(lines, cols, rows);
+      })
+    });
+  }
+
   clear = function() {
     if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  toPNG() {
+    return this.canvas.toDataURL('image/png');
   }
 }
 
 /**
  * Convierte un color en hexadecimal (#ffffff) a RGB
- * @param {string} hex 
+ * @param {string} hex
  * @returns Un array con los colores en RGB, en ese orden
  */
 function hex2rgb(hex) {
