@@ -2,3 +2,14 @@
 	width: 256px;
 	height: 256px;
 }
+
+#container {
+	width: 90%;
+	max-width: 1170px;
+	margin: auto;
+}
+
+code {
+	margin-bottom: 1rem;
+	display: block;
+}

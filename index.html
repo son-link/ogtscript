@@ -8,11 +8,33 @@
 	<link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-	<h1>OGTScript</h1>
+	
 	<div id="container">
-		<ver-ogt src="minabo.ogt" />
+		<h1>OGTScript</h1>
+		<p>
+			Está es una página sencilla para ir mostrando el avance de OGTScript
+		</p>
+		<div id="toolbar">
+			<label>
+				<input type="checkbox" id="cargar-src">
+				src="minabo.ogt"
+			</label>
+			<label>
+				<input type="number" id="scale" size="2" min="1" max="16" value="2">
+				Escala de la imagen.
+			</label>
+			<label>
+				<input type="checkbox" id="enable-toolbar">
+				Habilitar barra de herramientas (solo para &ltver-ogt>)
+			</label>
+		</div>
+		<div class="view-example">
+			<ver-ogt scale="2"></ver-ogt>
+		</div>
 	</div>
+	<canvas id="test"></canvas>
 	<script src="assets/ogtscript.js"></script>
-	<script src="assets/ogt-tag.js"></script>
+	<script src="assets/tag-ver-ogt.js"></script>
+	<script src="assets/app.js" defer></script>
 </body>
 </html>

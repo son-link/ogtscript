@@ -13,16 +13,26 @@ class OGTScript {
     this.ctx = null;
     this.filename = '';
 
-    if (canvas) {
-      if (typeof canvas == 'string') this.canvas = document.querySelector(canvas);
-      else if (typeof canvas == 'object') this.canvas = canvas;
-    } else this.canvas = document.createElement('canvas');
+    if (!canvas) return;
+    
+    if (typeof canvas == 'string') this.canvas = document.querySelector(canvas);
+    else if (typeof canvas == 'object') this.canvas = canvas;
+    else return;
+
+    this.ctx = this.canvas.getContext('2d');
 
     if (options && typeof options == 'object') this.options = options;
     else {
       this.options = {
-        scale: 1
+        scale: 1,
+        autoSize: false
       }
+    }
+
+    this.cur_canvas = {
+      lines: 0,
+      cols: 0,
+      rows: 0
     }
   }
 
@@ -32,15 +42,22 @@ class OGTScript {
    * @param {int} cols El total de columnas
    * @param {int} rows El total de lineas
    */
-  drawImage = function(lines, cols, rows) {
-    this.ctx = this.canvas.getContext('2d');
-    this.ctx.scale(this.scale, this.scale);
+  drawImage = function() {
+    this.clear();
+    this.ctx.save();
+
+    if (this.options.autoSize) {
+      this.canvas.width = this.options.scale * this.cur_canvas.cols;
+      this.canvas.height = this.options.scale * this.cur_canvas.rows;
+    }
+    
+    this.ctx.scale(this.options.scale, this.options.scale);
     let posx, posy = 0;
 
-    for (let row = 0; row < rows; row++) {
-      const colors = lines[row].split(';')
+    for (let row = 0; row < this.cur_canvas.rows; row++) {
+      const colors = this.cur_canvas.lines[row].split(';')
 
-      for (let col = 0; col < cols; col++) {
+      for (let col = 0; col < this.cur_canvas.cols; col++) {
         const color = colors[col];
         this.ctx.fillStyle = color;
         this.ctx.fillRect(posx, posy, 1, 1);
@@ -50,6 +67,8 @@ class OGTScript {
       posx = 0;
       posy++
     }
+
+    this.ctx.restore();
   }
 
   /**
@@ -66,14 +85,18 @@ class OGTScript {
       const lines = data.slice(1)
       if (format.toLowerCase() != 'ogt') return;
 
-      this.drawImage(lines, cols, rows);
+      this.cur_canvas.lines = lines;
+      this.cur_canvas.cols = cols;
+      this.cur_canvas.rows = rows;
+
+      this.drawImage();
     };
 
     reader.readAsText(file);
   }
 
   openOgtUrl = function(url) {
-    this.clear();
+    this.ctx.reset();
     if (!url || typeof url != 'string') return;
 
     fetch(url).then( resp => {
@@ -84,8 +107,11 @@ class OGTScript {
         const lines = data.slice(1)
         if (format.toLowerCase() != 'ogt') return;
 
-        this.drawImage(lines, cols, rows);
-      })
+        this.cur_canvas.lines = lines;
+        this.cur_canvas.cols = cols;
+        this.cur_canvas.rows = rows;
+        this.drawImage();
+      });
     });
   }
 
@@ -93,8 +119,9 @@ class OGTScript {
     if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  toPNG() {
-    return this.canvas.toDataURL('image/png');
+  scale = function(scale) {
+    this.options.scale = parseInt(scale);
+    this.drawImage();
   }
 }
 

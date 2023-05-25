@@ -1,19 +1,34 @@
-class OGTTag extends HTMLElement {
+class VerOGT extends HTMLElement {
   constructor() {
     super();
     this.filename = '';
+    this.scale = (this.hasAttribute('scale')) ? parseInt(this.getAttribute('scale')) : 1;
+    this.autoSize = (this.hasAttribute('auto-size')) ? !!parseInt(this.getAttribute('auto-size')) : false;
+    this.enableToolbar = (this.hasAttribute('enable-toolbar'))
+      ? !!parseInt(this.getAttribute('enable-toolbar')) : false;
 
     // El shadow-root es, por así decirlo, el equivalente a document
     let shadowRoot = this.attachShadow({mode: 'open'});
 
     // Indicamos la plantilla a usar
     shadowRoot.innerHTML = this.template;
+    this.toolbar = this.shadowRoot.querySelector('#toolbar');
+
+    if (this.enableToolbar) this.toolbar.classList.add('enable');
 
     // E inicializamos la clase OGTScript indicando el elemento del canvas
     // donde se dibujara la imagen
-    this.ogt = new OGTScript(this.shadowRoot.querySelector('#drawer'));
+    this.ogt = new OGTScript(
+      this.shadowRoot.querySelector('#drawer'),
+      {
+        scale: this.scale,
+        autoSize: this.autoSize,
+      }
+    );
+  }
 
-    if (this.hasAttribute('src')) this.ogt.openOgtUrl(this.getAttribute('src'))
+  static get observedAttributes() {
+    return ['src', 'scale', 'enable-toolbar'];
   }
 
   // Esta es la función que contiene la plantilla con el visor y en un futuro el editor
@@ -21,9 +36,13 @@ class OGTTag extends HTMLElement {
     return `
       <style>
         #toolbar {
-          display: flex;
+          display: none;
           flex-wrap: wrap;
           aling-items: center;
+        }
+
+        #toolbar.enable {
+          display: flex;
         }
 
         button {
@@ -51,6 +70,10 @@ class OGTTag extends HTMLElement {
         #clear {
           background-image: url('assets/img/image-remove.svg');
         }
+
+        #nombre-ogt {
+          width: 100%;
+        }
       </style>
       <div id="toolbar">
         <label for="openfile" title="Abrir OGT">
@@ -58,8 +81,8 @@ class OGTTag extends HTMLElement {
         </label>
         <button id="clear" title="Limpiar"></button>
         <button id="export" title="Exportar a PNG"></button>
+        <div id="nombre-ogt">&nbsp;</div>
       </div>
-      <p id="nombre-ogt"></p>
       <canvas id="drawer" width="256" height="256"></canvas>
     `
   }
@@ -68,8 +91,18 @@ class OGTTag extends HTMLElement {
   attributeChangedCallback(attr, oldVal, newVal) {
     if(attr == 'src' && oldVal != newVal) {
       this.status = newVal;
-      this.shadowRoot.innerHTML = this.template;
       this.ogt.openOgtUrl(newVal);
+      this.filename = newVal;
+      this.shadowRoot.querySelector('#nombre-ogt').innerHTML = `Estas viendo mi OGT: ${this.filename}`
+    }
+
+    if(attr == 'scale' && oldVal != newVal) {
+      this.ogt.scale(newVal);
+    }
+
+    if(attr == 'enable-toolbar' && oldVal != newVal) {
+      this.toolbar.classList.remove('enable');
+      if (newVal == 1) this.toolbar.classList.add('enable');
     }
   }
 
@@ -100,4 +133,4 @@ class OGTTag extends HTMLElement {
 }
 
 // Y finalmente definimos el nuevo elemento
-customElements.define('ver-ogt', OGTTag);
+customElements.define('ver-ogt', VerOGT);
