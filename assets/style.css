@@ -13,3 +13,14 @@ code {
 	margin-bottom: 1rem;
 	display: block;
 }
+
+#toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: start;
+	gap: 5px;
+}
+
+#div-scale > #scale {
+	display: block;
+}
