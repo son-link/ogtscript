@@ -28,7 +28,7 @@ class VerOGT extends HTMLElement {
 
   // Esta es la función que contiene la plantilla con el visor y en un futuro el editor
   get template() {
-    return `<canvas id="drawer" width="256" height="256"></canvas>`
+    return `<canvas id="drawer"></canvas>`
   }
 
   // Esta función se llama cada vez que se cambia una propiedad de la etiqueta del componente

@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		});
 	})
 
-	$('#scale').addEventListener('change', (e) => {
+	$('#scale').addEventListener('input', (e) => {
 		const scale = e.target.value
 		ogtView.setAttribute('scale', scale);
 		$('#scale-value').innerText = scale;

@@ -25,7 +25,7 @@ class OGTScript {
     else {
       this.options = {
         scale: 1,
-        autoSize: false
+        autoSize: true
       }
     }
 
