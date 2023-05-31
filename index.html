@@ -23,14 +23,13 @@
 				<input type="radio" name="src" class="cambiar-src" value="example.ogt">
 				src="example.ogt"
 			</label>
-			<div id="div-scale">
-				Escala de la imagen: scale="<span id="scale-value">1</span>"
-				<input type="range" id="scale" name="scale" 
-					min="1" max="10" value="1">
-			</div>
 		</div>
 		<div class="view-example">
-			<ver-ogt scale="2"></ver-ogt>
+			<ver-ogt auto-size="1" />
+		</div>
+		<div id="div-scale">
+			Escala de la imagen (x<span id="scale-value">1</span>)
+			<input type="range" id="scale" name="scale" min="1" max="8" value="1">
 		</div>
 	</div>
 	<canvas id="test"></canvas>
