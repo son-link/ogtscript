@@ -95,7 +95,7 @@ class OGTScript {
     reader.readAsText(file);
   }
 
-  openOgtUrl = function(url) {
+  openOgtUrl = function(url, cb=null) {
     this.ctx.reset();
     if (!url || typeof url != 'string') return;
 
@@ -111,6 +111,8 @@ class OGTScript {
         this.cur_canvas.cols = cols;
         this.cur_canvas.rows = rows;
         this.drawImage();
+
+        if (cb && typeof cb == 'function') cb();
       });
     });
   }
@@ -122,6 +124,32 @@ class OGTScript {
   scale = function(scale) {
     this.options.scale = parseInt(scale);
     this.drawImage();
+  }
+  
+  toDataURL = function(url, scale=1) {
+    this.canvas = document.createElement('canvas');
+    this.canvas.style.display = 'none';
+    document.body.append(this.canvas);
+    this.ctx = this.canvas.getContext('2d');
+
+    this.options = {
+      scale: scale,
+      autoSize: true
+    }
+
+    this.cur_canvas = {
+      lines: 0,
+      cols: 0,
+      rows: 0
+    }
+
+    return new Promise( (resolve, reject) => {
+      this.openOgtUrl(url, () => {
+          const data = this.canvas.toDataURL('image/png');
+          this.canvas.remove();
+          resolve(data);
+        });
+    });
   }
 }
 

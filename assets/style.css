@@ -12,7 +12,6 @@
 }
 
 code {
-	margin-bottom: 1rem;
 	display: block;
 }
 
@@ -25,4 +24,13 @@ code {
 
 #div-scale > #scale {
 	display: block;
+}
+
+#dataURL,
+#img {
+	display: block;
+}
+
+#img {
+	margin-top: 1rem;
 }

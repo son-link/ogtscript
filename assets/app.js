@@ -24,6 +24,12 @@ document.addEventListener("DOMContentLoaded", function() {
 		$('#scale-value').innerText = scale;
 	});
 	
+	$('#dataURL').addEventListener('click', async (e) => {
+		const ogtscript = new OGTScript();
+		const url = ogtView.getAttribute('src');
+		ogtscript.toDataURL(url, 4).then( data => $('#img').setAttribute('src', data));
+	});
+
 	/*$('#openfile')[0].addEventListener('change', function() {
 		console.dir(this.files[0]);
 		//$('ver-ogt')[0].setAttribute('src', this.files[0].name);

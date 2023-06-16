@@ -31,8 +31,27 @@
 			Escala de la imagen (x<span id="scale-value">1</span>)
 			<input type="range" id="scale" name="scale" min="1" max="8" value="1">
 		</div>
+
+		<p>
+			El siguiente ejemplo usa la función toDataURL, la cual devuelve una cadena codificada en base64 (data:image) de la imagen generada.<br />
+		</p>
+		<p>
+			<code>
+				<pre>
+const ogtscript = new OGTScript();
+const url = ogtView.getAttribute('src');
+ogtscript.toDataURL(url, 4).then( data => $('#img').setAttribute('src', data));
+				</pre>
+			</code>
+		</p>
+		<p>
+			El primer parámetro es la url de la imagen, el segundo, opcional, es la escala de la imagen generada (por defecto a 1)
+		</p>
+
+		<a href="#" id="dataURL">Exportar a dataURL</a>
+		<img id="img" />
 	</div>
-	<canvas id="test"></canvas>
+
 	<script src="assets/ogtscript.js"></script>
 	<script src="assets/tag-ver-ogt.js"></script>
 	<script src="assets/app.js" defer></script>
