@@ -14,7 +14,7 @@ class OGTScript {
     this.filename = '';
 
     if (!canvas) return;
-    
+
     if (typeof canvas == 'string') this.canvas = document.querySelector(canvas);
     else if (typeof canvas == 'object') this.canvas = canvas;
     else return;
@@ -50,7 +50,7 @@ class OGTScript {
       this.canvas.width = this.options.scale * this.cur_canvas.cols;
       this.canvas.height = this.options.scale * this.cur_canvas.rows;
     }
-    
+
     this.ctx.scale(this.options.scale, this.options.scale);
     let posx, posy = 0;
 
@@ -95,9 +95,17 @@ class OGTScript {
     reader.readAsText(file);
   }
 
+  /**
+   *
+   * @param {String} url La URL del archivo OGT
+   * @param {Function} cb Función a la que llamara tras terminar el dibujado
+   * @returns
+   */
   openOgtUrl = function(url, cb=null) {
     this.ctx.reset();
     if (!url || typeof url != 'string') return;
+
+    this.filename = url.substring(url.lastIndexOf('/')+1).replace('.ogt', '');
 
     fetch(url).then( resp => {
       if (resp.status != 200) return;
@@ -117,15 +125,28 @@ class OGTScript {
     });
   }
 
+  /**
+   * Limpia el contenido del canvas
+   */
   clear = function() {
     if (this.ctx) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+  /**
+   * Escala el tamaño de la imagen
+   * @param {Int} scale
+   */
   scale = function(scale) {
     this.options.scale = parseInt(scale);
     this.drawImage();
   }
-  
+
+  /**
+   * Devuelve una cadena de texto con el contenido de la imagen codificada en Base64 (data:image)
+   * @param {String} url La URL al OGT a convertir
+   * @param {Int} scale La escala de la imagen
+   * @returns Una cadena con el contenido de la imagen generada
+   */
   toDataURL = function(url, scale=1) {
     this.canvas = document.createElement('canvas');
     this.canvas.style.display = 'none';
@@ -150,6 +171,16 @@ class OGTScript {
           resolve(data);
         });
     });
+  }
+
+  /**
+   * Exporta el contenido del canvas a un fichero de imagen en formato PNG
+   */
+  export2png = function() {
+    const exportLink = document.createElement('a');
+    exportLink.href = this.canvas.toDataURL('image/png');
+    exportLink.setAttribute('download', `${this.filename}.png`)
+    exportLink.click();
   }
 }
 

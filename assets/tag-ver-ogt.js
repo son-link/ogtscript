@@ -4,6 +4,7 @@ class VerOGT extends HTMLElement {
     this.filename = '';
     this.scale = (this.hasAttribute('scale')) ? parseInt(this.getAttribute('scale')) : 1;
     this.autoSize = (this.hasAttribute('auto-size')) ? !!parseInt(this.getAttribute('auto-size')) : false;
+    this.data = null;
 
     // El shadow-root es, por así decirlo, el equivalente a document
     let shadowRoot = this.attachShadow({mode: 'open'});
@@ -54,6 +55,16 @@ class VerOGT extends HTMLElement {
   // Elimina el listener del input para evitar posibles problemas
   disconnectedCallback() {
     // Vacía de momento
+  }
+
+  handleEvent(event) {
+    if (event.type === "export-ogt") {
+      this.ogt.export2png();
+    }
+  }
+
+  connectedCallback() {
+    document.addEventListener("export-ogt", this);
   }
 }
 

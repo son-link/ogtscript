@@ -34,3 +34,7 @@ code {
 #img {
 	margin-top: 1rem;
 }
+
+a {
+	cursor: pointer;
+}
